@@ -69,10 +69,13 @@
 
 package ca.nrc.cadc.caom2;
 
-import ca.nrc.cadc.caom2.util.CaomValidator;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.util.CaomValidator;
 
 /**
  *
@@ -80,6 +83,8 @@ import java.util.TreeSet;
  */
 public class Target implements Serializable
 {
+    private static final Logger log = Logger.getLogger(Target.class);
+
     private static final long serialVersionUID = 201110261400L;
 
     // immutable state
@@ -114,5 +119,45 @@ public class Target implements Serializable
     public Set<String> getKeywords()
     {
         return keywords;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof Target)
+        {
+            Target tar = (Target) o;
+            return (this.compareToComplete(tar));
+        }
+        return false;
+
+    }
+
+    private boolean compareToComplete(Target tar)
+    {
+        boolean equ = ((this.name == null && tar.getName() == null)
+                || (this.name != null && tar.getName() != null && this.name.equals(tar.getName())));
+
+        equ = equ && ((this.type == null && tar.type == null)
+                || (this.type != null && tar.type != null && this.type.equals(tar.type)));
+
+        equ = equ && ((this.standard == null && tar.standard == null)
+                || (this.standard != null && tar.standard != null && this.standard.equals(tar.standard)));
+
+        equ = equ && ((this.redshift == null && tar.redshift == null)
+                || (this.redshift != null && tar.redshift != null && this.redshift == tar.redshift));
+
+        equ = equ && ((this.moving == null && tar.moving == null)
+                || (this.moving != null && tar.moving != null && this.moving.equals(tar.moving)));
+
+        equ = equ && this.keywords.size() == tar.getKeywords().size();
+        equ = equ && this.keywords.containsAll(tar.getKeywords()) && tar.getKeywords().containsAll(this.keywords);
+        // log.info("In Target equ is set to " + equ);
+        return equ;
+
     }
 }

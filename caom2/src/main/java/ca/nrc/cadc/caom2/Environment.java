@@ -70,6 +70,7 @@
 package ca.nrc.cadc.caom2;
 
 import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -112,5 +113,45 @@ public class Environment implements Serializable
         sb.append(",");
         sb.append("]");
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof Environment)
+        {
+            Environment env = (Environment) o;
+            return (this.compareToComplete(env));
+        }
+        return false;
+    }
+
+    private boolean compareToComplete(Environment env)
+    {
+        boolean equ = ((this.seeing == null && env.seeing == null)
+                || (this.seeing != null && env.seeing != null && this.seeing.equals(env.seeing)));
+
+        equ = equ && ((this.humidity == null && env.humidity == null)
+                || (this.humidity != null && env.humidity != null && this.humidity.equals(env.humidity)));
+
+        equ = equ && ((this.elevation == null && env.elevation == null)
+                || (this.elevation != null && env.elevation != null && this.elevation.equals(env.elevation)));
+
+        equ = equ && ((this.tau == null && env.tau == null)
+                || (this.tau != null && env.tau != null && this.tau.equals(env.tau)));
+
+        equ = equ && ((this.wavelengthTau == null && env.wavelengthTau == null) || (this.wavelengthTau != null
+                && env.wavelengthTau != null && this.wavelengthTau.equals(env.wavelengthTau)));
+
+        equ = equ && ((this.ambientTemp == null && env.ambientTemp == null)
+                || (this.ambientTemp != null && env.ambientTemp != null && this.ambientTemp.equals(env.ambientTemp)));
+
+        equ = equ && ((this.photometric == null && env.photometric == null)
+                || (this.photometric != null && env.photometric != null && this.photometric.equals(env.photometric)));
+        return equ;
     }
 }

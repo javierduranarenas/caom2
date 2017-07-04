@@ -8,7 +8,7 @@
 *  National Research Council            Conseil national de recherches
 *  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
 *  All rights reserved                  Tous droits réservés
-*                                       
+*
 *  NRC disclaims any warranties,        Le CNRC dénie toute garantie
 *  expressed, implied, or               énoncée, implicite ou légale,
 *  statutory, of any kind with          de quelque nature que ce
@@ -31,10 +31,10 @@
 *  software without specific prior      de ce logiciel sans autorisation
 *  written permission.                  préalable et particulière
 *                                       par écrit.
-*                                       
+*
 *  This file is part of the             Ce fichier fait partie du projet
 *  OpenCADC project.                    OpenCADC.
-*                                       
+*
 *  OpenCADC is free software:           OpenCADC est un logiciel libre ;
 *  you can redistribute it and/or       vous pouvez le redistribuer ou le
 *  modify it under the terms of         modifier suivant les termes de
@@ -44,7 +44,7 @@
 *  either version 3 of the              : soit la version 3 de cette
 *  License, or (at your option)         licence, soit (à votre gré)
 *  any later version.                   toute version ultérieure.
-*                                       
+*
 *  OpenCADC is distributed in the       OpenCADC est distribué
 *  hope that it will be useful,         dans l’espoir qu’il vous
 *  but WITHOUT ANY WARRANTY;            sera utile, mais SANS AUCUNE
@@ -54,7 +54,7 @@
 *  PURPOSE.  See the GNU Affero         PARTICULIER. Consultez la Licence
 *  General Public License for           Générale Publique GNU Affero
 *  more details.                        pour plus de détails.
-*                                       
+*
 *  You should have received             Vous devriez avoir reçu une
 *  a copy of the GNU Affero             copie de la Licence Générale
 *  General Public License along         Publique GNU Affero avec
@@ -69,26 +69,32 @@
 
 package ca.nrc.cadc.caom2;
 
-import ca.nrc.cadc.caom2.util.CaomValidator;
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.util.CaomValidator;
+
 /**
- * 
+ *
  * @author pdowler
  */
 public class Requirements implements Serializable
 {
+    private static final Logger log = Logger.getLogger(Requirements.class);
+
     private static final long serialVersionUID = 201411171230L;
-    
+
     private final Status flag;
-    
+
     public Requirements(Status flag)
     {
         CaomValidator.assertNotNull(Requirements.class, "flag", flag);
         this.flag = flag;
     }
 
-    public Status getFlag() {
+    public Status getFlag()
+    {
         return flag;
     }
 
@@ -96,5 +102,27 @@ public class Requirements implements Serializable
     public String toString()
     {
         return "Requirements[" + flag.getValue() + "]";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof Requirements)
+        {
+            Requirements req = (Requirements) o;
+            return (this.compareToComplete(req));
+        }
+        return false;
+    }
+
+    private boolean compareToComplete(Requirements req)
+    {
+        boolean equ = this.flag.equals(req.getFlag());
+        // log.info("In Requirements equ is set to " + equ);
+        return equ;
     }
 }

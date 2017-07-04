@@ -69,10 +69,13 @@
 
 package ca.nrc.cadc.caom2;
 
-import ca.nrc.cadc.caom2.util.CaomValidator;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.util.CaomValidator;
 
 /**
  *
@@ -80,6 +83,8 @@ import java.util.TreeSet;
  */
 public class Proposal implements Serializable
 {
+    private static final Logger log = Logger.getLogger(Proposal.class);
+
     private static final long serialVersionUID = 201110261400L;
 
     // immutable state
@@ -93,7 +98,9 @@ public class Proposal implements Serializable
     // mutable content
     private final Set<String> keywords = new TreeSet<String>();
 
-    private Proposal() { }
+    private Proposal()
+    {
+    }
 
     public Proposal(String id)
     {
@@ -115,5 +122,38 @@ public class Proposal implements Serializable
     public String toString()
     {
         return getClass().getSimpleName() + "[" + id + "]";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof Proposal)
+        {
+            Proposal prop = (Proposal) o;
+            return (this.compareToComplete(prop));
+        }
+        return false;
+
+    }
+
+    private boolean compareToComplete(Proposal prop)
+    {
+        boolean equ = ((this.id == null && prop.id == null)
+                || ((this.id != null && prop.id != null && this.id.equals(prop.getID()))));
+
+        equ = equ && ((this.pi == null && prop.pi == null)
+                || (this.pi != null && prop.pi != null && this.pi.equals(prop.pi)));
+
+        equ = equ && ((this.project == null && prop.project == null)
+                || (this.project != null && prop.project != null && this.project.equals(prop.project)));
+
+        equ = equ && ((this.title == null && prop.title == null)
+                || (this.title != null && prop.title != null && this.title.equals(prop.title)));
+        // log.info("In Proposal equ is set to " + equ);
+        return equ;
     }
 }

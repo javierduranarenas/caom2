@@ -3,7 +3,7 @@
 *******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 **************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 *
-*  (c) 2011.                            (c) 2011.
+*  (c) 2009.                            (c) 2009.
 *  Government of Canada                 Gouvernement du Canada
 *  National Research Council            Conseil national de recherches
 *  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -69,18 +69,23 @@
 
 package ca.nrc.cadc.caom2;
 
-import ca.nrc.cadc.caom2.util.CaomValidator;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.util.CaomValidator;
+
 /**
  * An observation describes a set of empirical data.
- * 
+ *
  * @author pdowler
  */
 public abstract class Observation extends CaomEntity implements Comparable<Observation>
 {
+    private static final Logger log = Logger.getLogger(Observation.class);
+
     private static final long serialVersionUID = 201604081100L;
 
     // immutable state
@@ -89,7 +94,7 @@ public abstract class Observation extends CaomEntity implements Comparable<Obser
 
     // mutable state
     private Algorithm algorithm;
-    
+
     public Integer sequenceNumber;
     public ObservationIntentType intent;
     public String type;
@@ -163,9 +168,80 @@ public abstract class Observation extends CaomEntity implements Comparable<Obser
         if (o instanceof Observation)
         {
             Observation obs = (Observation) o;
-            return (this.compareTo(obs) == 0);
+            return (this.compareToComplete(obs));
         }
         return false;
+    }
+
+    private boolean compareToComplete(Observation obs)
+    {
+        boolean equ = this.compareTo(obs) == 0;
+
+        // log.info("1 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.collection == null && obs.getCollection() == null) || (this.collection != null
+                && obs.getCollection() != null && this.collection.equals(obs.getCollection())));
+        // log.info("2 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.observationID == null && obs.getObservationID() == null) || (this.observationID != null
+                && obs.getObservationID() != null && this.observationID.equals(obs.getObservationID())));
+        // log.info("3 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.algorithm == null && obs.getAlgorithm() == null)
+                || (this.algorithm != null && obs.getAlgorithm() != null && this.algorithm.equals(obs.getAlgorithm())));
+        // log.info("4 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.intent == null && obs.intent == null)
+                || (this.intent != null && obs.intent != null && this.intent.equals(obs.intent)));
+        // log.info("5 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.type == null && obs.type == null)
+                || (this.type != null && obs.type != null && this.type.equals(obs.type)));
+        // log.info("6 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.proposal == null && obs.proposal == null)
+                || (this.proposal != null && obs.proposal != null && this.proposal.equals(obs.proposal)));
+        // log.info("7 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.telescope == null && obs.telescope == null)
+                || (this.telescope != null && obs.telescope != null && this.telescope.equals(obs.telescope)));
+        // log.info("8 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.instrument == null && obs.instrument == null)
+                || (this.instrument != null && obs.instrument != null && this.instrument.equals(obs.instrument)));
+        // log.info("9 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.target == null && obs.target == null)
+                || (this.target != null && obs.target != null && this.target.equals(obs.target)));
+        // log.info("10 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.targetPosition == null && obs.targetPosition == null) || (this.targetPosition != null
+                && obs.targetPosition != null && this.targetPosition.equals(obs.targetPosition)));
+        // log.info("11 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.requirements == null && obs.requirements == null) || (this.requirements != null
+                && obs.requirements != null && this.requirements.equals(obs.requirements)));
+        // log.info("12 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.environment == null && obs.environment == null)
+                || (this.environment != null && obs.environment != null && this.environment.equals(obs.environment)));
+        // log.info("this.environment " + this.environment + " obs.environment "
+        // + obs.environment);
+        // log.info("13 In Observation equ is set to " + equ);
+
+        equ = equ && ((this.metaRelease == null && obs.metaRelease == null)
+                || (this.metaRelease != null && obs.metaRelease != null && this.metaRelease.equals(obs.metaRelease)));
+        // log.info("14 In Observation equ is set to " + equ);
+
+        // log.info("15 In Observation equ is set to " + equ);
+        equ = equ && ((this.planes == null && obs.planes == null)
+                || (this.planes != null && obs.planes != null && this.planes.size() == obs.planes.size()));
+        // log.info("16 In Observation equ is set to " + equ);
+
+        equ = equ && this.planes.containsAll(obs.planes) && obs.planes.containsAll(this.planes);
+        // log.info("*17 In Observation equ is set to " + equ);
+
+        return equ;
     }
 
     @Override
@@ -178,5 +254,5 @@ public abstract class Observation extends CaomEntity implements Comparable<Obser
     public int compareTo(Observation o)
     {
         return getURI().compareTo(o.getURI());
-    }    
+    }
 }

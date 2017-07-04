@@ -69,10 +69,13 @@
 
 package ca.nrc.cadc.caom2;
 
-import ca.nrc.cadc.caom2.util.CaomValidator;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.util.CaomValidator;
 
 /**
  *
@@ -80,6 +83,8 @@ import java.util.TreeSet;
  */
 public class Telescope implements Serializable
 {
+    private static final Logger log = Logger.getLogger(Telescope.class);
+
     private static final long serialVersionUID = 201110261400L;
 
     // immutable state
@@ -92,7 +97,7 @@ public class Telescope implements Serializable
 
     // mutable contents
     private final Set<String> keywords = new TreeSet<String>();
-    
+
     public Telescope(String name)
     {
         CaomValidator.assertNotNull(Telescope.class, "name", name);
@@ -113,5 +118,37 @@ public class Telescope implements Serializable
     public String toString()
     {
         return getClass().getSimpleName() + "[" + name + "]";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof Telescope)
+        {
+            Telescope tel = (Telescope) o;
+            return (this.compareToComplete(tel));
+        }
+        return false;
+    }
+
+    private boolean compareToComplete(Telescope tel)
+    {
+        boolean equ = ((this.name == null && tel.getName() == null)
+                || (this.name != null && tel.getName() != null && this.name.equals(tel.getName())));
+
+        equ = equ && ((this.geoLocationX == null && tel.geoLocationX == null)
+                || (this.geoLocationX == null && tel.geoLocationX == null && this.geoLocationX == tel.geoLocationX));
+        equ = equ && ((this.geoLocationY == null && tel.geoLocationY == null)
+                || (this.geoLocationY == null && tel.geoLocationY == null && this.geoLocationY == tel.geoLocationY));
+        equ = equ && ((this.geoLocationZ == null && tel.geoLocationZ == null)
+                || (this.geoLocationZ == null && tel.geoLocationZ == null && this.geoLocationZ == tel.geoLocationZ));
+
+        equ = equ && this.keywords.size() == tel.getKeywords().size();
+        equ = equ && this.keywords.containsAll(tel.getKeywords()) && tel.getKeywords().containsAll(this.keywords);
+        return equ;
     }
 }
