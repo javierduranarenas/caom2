@@ -69,10 +69,13 @@
 
 package ca.nrc.cadc.caom2;
 
-import ca.nrc.cadc.caom2.util.CaomValidator;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.util.CaomValidator;
 
 /**
  *
@@ -80,6 +83,8 @@ import java.util.TreeSet;
  */
 public class Instrument implements Serializable
 {
+    private static final Logger log = Logger.getLogger(Instrument.class);
+
     private static final long serialVersionUID = 201110261400L;
 
     // immutable state
@@ -108,5 +113,32 @@ public class Instrument implements Serializable
     public String toString()
     {
         return getClass().getSimpleName() + "[" + name + "]";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof Instrument)
+        {
+            Instrument ins = (Instrument) o;
+            return (this.compareToComplete(ins));
+        }
+        return false;
+    }
+
+    private boolean compareToComplete(Instrument ins)
+    {
+        boolean equ = ((this.name == null && ins.getName() == null)
+                || (this.name != null && ins.getName() != null && this.name.equals(ins.getName())));
+
+        equ = equ && this.keywords.size() == ins.getKeywords().size();
+
+        equ = equ && this.keywords.containsAll(ins.getKeywords()) && ins.getKeywords().containsAll(this.keywords);
+        return equ;
+
     }
 }

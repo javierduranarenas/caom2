@@ -69,26 +69,33 @@
 
 package ca.nrc.cadc.caom2;
 
-import ca.nrc.cadc.caom2.types.Point;
-import ca.nrc.cadc.caom2.util.CaomValidator;
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.types.Point;
+import ca.nrc.cadc.caom2.util.CaomValidator;
+
 /**
- * 
+ *
  * @author pdowler
  */
-public class TargetPosition  implements Serializable
+public class TargetPosition implements Serializable
 {
+    private static final Logger log = Logger.getLogger(TargetPosition.class);
+
     private static final long serialVersionUID = 201311261000L;
 
     // immutable state
     private String coordsys;
     private Point coordinates;
-    
+
     public Double equinox;
 
-    private TargetPosition() { }
-    
+    private TargetPosition()
+    {
+    }
+
     public TargetPosition(String coordsys, Point coordinates)
     {
         CaomValidator.assertNotNull(getClass(), "coordsys", coordsys);
@@ -106,10 +113,40 @@ public class TargetPosition  implements Serializable
     {
         return coordinates;
     }
-    
+
     @Override
     public String toString()
     {
         return getClass().getSimpleName() + "[" + coordsys + "," + coordinates + "]";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof TargetPosition)
+        {
+            TargetPosition tar = (TargetPosition) o;
+            return (this.compareToComplete(tar));
+        }
+        return false;
+
+    }
+
+    private boolean compareToComplete(TargetPosition tar)
+    {
+        boolean equ = ((this.coordsys == null && tar.getCoordsys() == null)
+                || (this.coordsys != null && tar.getCoordsys() != null && this.coordsys.equals(tar.getCoordsys())));
+
+        equ = equ && ((this.coordinates == null && tar.coordinates == null) && (this.coordinates != null
+                && tar.coordinates != null && this.coordinates.equals(tar.getCoordinates())));
+
+        equ = equ && ((this.equinox == null && tar.equinox == null)
+                || (this.equinox != null && tar.equinox != null && this.equinox.equals(tar.equinox)));
+        // log.info("In TargetPosition equ is set to " + equ);
+        return equ;
     }
 }

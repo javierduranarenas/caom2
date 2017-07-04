@@ -71,12 +71,16 @@ package ca.nrc.cadc.caom2;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  * @author pdowler
  */
 public class Algorithm implements Serializable
 {
+    private static final Logger log = Logger.getLogger(Algorithm.class);
+
     private static final long serialVersionUID = 201110261400L;
 
     private String name;
@@ -97,5 +101,27 @@ public class Algorithm implements Serializable
     public String toString()
     {
         return getClass().getSimpleName() + "[" + name + "]";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null)
+            return false;
+        if (this == o)
+            return true;
+        if (o instanceof Algorithm)
+        {
+            Algorithm a = (Algorithm) o;
+            return (this.compareToComplete(a));
+        }
+        return false;
+    }
+
+    private boolean compareToComplete(Algorithm a)
+    {
+        boolean equ = ((this.name == null && a.getName() == null)
+                || (this.name != null && a.getName() != null && this.name.equals(a.getName())));
+        return equ;
     }
 }
