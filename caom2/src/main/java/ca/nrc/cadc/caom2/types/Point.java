@@ -71,8 +71,6 @@ package ca.nrc.cadc.caom2.types;
 
 import java.io.Serializable;
 
-import ca.nrc.cadc.caom2.TargetPosition;
-
 /**
  *
  * @author pdowler
@@ -97,36 +95,12 @@ public class Point implements Serializable
         this.cval2 = cval2;
     }
 
-    // NOTE: do not implement equals() method here; PolygonUtil assumes the
-    // Object impl
+    // NOTE: do not implement equals() method here; PolygonUtil assumes the Object impl
 
     @Override
     public String toString()
     {
         return "Point[" + cval1 + ", " + cval2 + "]";
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (o == null)
-            return false;
-        if (this == o)
-            return true;
-        if (o instanceof TargetPosition)
-        {
-            Point po = (Point) o;
-            return (this.compareToComplete(po));
-        }
-        return false;
-    }
-
-    private boolean compareToComplete(Point po)
-    {
-        boolean equ = this.cval1 == po.cval1 && this.cval2 == po.cval2;
-
-        return equ;
-
     }
 
 }
